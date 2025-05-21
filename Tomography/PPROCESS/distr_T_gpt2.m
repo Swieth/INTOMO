@@ -1,0 +1,65 @@
+function [T,T3D,undu] = distr_T_gpt2(BLh_pudel_num,dmj,z1)
+%function designed to generate the temperature over model domain
+%___________________input_________________
+% dmj - day of the year
+% BLh_pudel - the centers of voxels coordinates
+% z1 - number of UTM projection
+% __________________output_________________
+% T, T3D - the temperature distribuition inside model [K]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[wi2,ki2,wa2] = size(BLh_pudel_num);
+BLh_pudel_num_2D = reshape(BLh_pudel_num,[wi2 ki2*wa2]);
+B = BLh_pudel_num_2D(1,:);
+L = BLh_pudel_num_2D(2,:);
+h = BLh_pudel_num_2D(3,:)*1000;
+B = B';
+L = L';
+h = h';
+if isstruct(z1)==0 & ischar(z1)==0 & license('test','map_toolbox')==1
+  [ellipsoid,estr] = utmgeoid(z1);
+   utmstruct = defaultm('utm'); 
+   utmstruct.zone = z1; 
+   utmstruct.geoid = ellipsoid; 
+   utmstruct = defaultm(utmstruct); 
+  [B,L] = minvtran(utmstruct,L,B);
+elseif isstruct(z1)== 1 & license('test','map_toolbox')==1
+    utmstruct = z1;
+   [B,L] = minvtran(utmstruct,L,B);
+
+elseif license('test','map_toolbox')==0
+    if strcmpi(z1,'utm') == 1
+    PRO =  tm2ell([L B],'utm');
+      L = PRO(:,1);
+      B = PRO(:,2);
+      z1 = 'utm';
+    else
+      PRO =  tm2ell([L B],'pl92');
+      L = PRO(:,1);
+      B = PRO(:,2);
+      z1 = 'pl92';
+    end
+end
+
+
+% load('/home/estera/Testowy/model.mat');
+% in=model.num_inner;
+% B=B(in);
+% L=L(in);
+% h=h(in);
+% fid=fopen('/home/estera/Testowy/WRFcoord_inner','w');
+% for i = 1:size(B,1)
+%     fprintf(fid,[sprintf('%03.8f', B(i,1)) '	' sprintf('%03.8f', L(i,1)) '	' sprintf('%2.4f', h(i,1))]);
+%     fprintf(fid,'\n');
+% end
+% fclose(fid);
+
+   B = B/180*pi();
+   L = L/180*pi();
+%for i = 1 : length(B)
+   [p,t,dT,E,ah,aw,undu] = gpt2(dmj,B,L,h,size(B,1),0);
+   clear p T dT ah aw
+%end
+clear p N 
+T = t + 273.15;
+T = T';
+T3D = reshape(T,[1 ki2 wa2]);
