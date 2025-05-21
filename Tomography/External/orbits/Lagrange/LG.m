@@ -1,0 +1,86 @@
+function LLG = LG(d,stdT,Fx,NA)
+
+% Lagrange(LG) Interpolation Polynomial. Eq.(13)
+% d is number of data points used in LG
+% stdT = standardized time; computed in subroutine X
+% Fx = tabulated satellite ephemeris & clock; vector of size d
+% Want to Return NA or Input function if empty
+%
+% Written by  Phakphong Homniam
+% September 13, 2002
+% Original Mathcad source code by Boonsap Witchayangkoon, 2000
+
+
+
+stdT = stdT(:);
+Fx = Fx(:);
+
+if length(Fx) == 1
+    LLG = NA;
+    return
+elseif d < 2
+    fid_err=fopen('LG_errors.txt','a');
+    fprintf(fid_err,'Err: Degree of interpolation must more than 2.\n');
+    
+    return
+elseif size(Fx,1) ~= d
+    fid_err=fopen('LG_errors.txt','a');
+    fprintf(fid_err,'Err: Fx must has the same point as d.\n');
+    fclose(fid_err);
+    return
+end
+numNA = 0;
+rowFx = size(Fx,1);
+for s = 1:rowFx
+    if Fx(s,1) == NA
+        numNA = numNA+1;
+    end
+end
+if numNA > 0    % ceil(0.3*rowFx)
+    fid_err=fopen('LG_errors.txt','a');
+    fprintf(fid_err,'Too many orbit NA in SP3 data.\n');
+    fclose(fid_err);
+    LLG = NA;
+    return
+end
+LLG = zeros(d,1);
+nLG = ones(d,1);
+if numNA == 0
+    switch d
+    case 3
+        dLG = [2 -1 2]';
+    case 5
+        dLG = [24 -6 4 -6 24]';
+    case 7
+        dLG = [720 -120 48 -36 48 -120 720]';
+    case 9
+        dLG = [40320 -5040 1440 -720 576 -720 1440 -5040 40320]';
+    case 11
+        dLG = [3628800 -362880 80640 -30240 17280 -14400 17280 -30240 80640 -362880 3628800]'; 
+    case 13
+        dLG = [479001600 -39916800 7257600 -2177280 967680 -604800 518400 ...
+                -604800 967680 -2177280 7257600 -39916800 479001600]';
+    otherwise
+        dLG = prodd(d,Fx,NA);
+    end
+end
+x(1,1) = 1;
+for a = 1:d-1
+    x(a+1,1) = x(a,1)+1;
+end
+for i = 1:d
+    if Fx(i,1) ~= NA
+        for j = 1:d
+            if i ~= j
+                if Fx(j,1) ~= NA 
+                    nLG(i,1) = nLG(i,1)*(stdT-x(j,1));
+                end
+            end
+        end
+        LLG(i,1) = nLG(i,1)/dLG(i,1);
+    end
+end
+
+LLG = LLG'*Fx;
+
+%%%%%%%%%%END%%%%%%%%%%
