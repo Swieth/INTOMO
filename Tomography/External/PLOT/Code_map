@@ -1,0 +1,68 @@
+#!/bin/bash
+
+gmtset HEADER_FONT_SIZE 12
+gmtset ANOT_FONT_SIZE 8
+
+#Input file and output directory
+
+
+input=/home/tomowuels/TOMO-LAB/DATA/$2
+output=/home/tomowuels/TOMO-LAB
+#Level
+n=$1
+#Bounding box
+lonmin=13
+lonmax=26
+latmin=48.5
+latmax=56
+#Color scale
+z_min=0.1
+z_max=85
+#Map weight (inches)
+szer_mapy=4i
+
+#Extract rows (according to the chosen level) and columns (that contain two coordinates and the value which will be presented on the map)
+p=$((($n - 1) * 14 * 15 + 1))
+k=$(($n * 14 * 15))
+awk 'NR >= p&&NR <= k {print $3 " " $2 " " $1}' p="$p" k="$k" $input > $output/tmp.dat
+
+
+#Make a basemap
+iname=$(basename $input)
+dash="-"
+level=Level
+#201405161800.TOM
+title=${iname:0:8}" "${iname:8:2}$dash${iname:10:2}" "$level" "$n
+$title
+psbasemap -R$lonmin/$lonmax/$latmin/$latmax -JM$szer_mapy -Ba5f1g1WSen:."$title": -P -Xc -Yc -K > $output/tmp.ps
+
+#Convert the xyz file into GRD file using xyz2grd
+awk '{print $1, $2, $3}' $output/tmp.dat | xyz2grd -R -I0.82/0.495 -G$output/tmp.grd 
+
+#Make a color table
+makecpt -Crainbow -T$z_min/$z_max/1 -Z >$output/tmp.cpt
+
+#Produce the image
+grdimage $output/tmp.grd -C$output/tmp.cpt -R -J -O -K >>$output/tmp.ps
+
+#Plot the scale bar
+i=i
+psscale -D$((${szer_mapy%?} / 2))$i/-1.2/$szer_mapy/0.2h -B10 -C$output/tmp.cpt -O -K >>$output/tmp.ps
+
+#Overlay with political boundaries
+pscoast -R -JM$szer_mapy -W3 -Df -Na/1/0t10:5_0 -A1000 -O -K -B >>$output/tmp.ps
+
+#Add a title
+pstext -R -J -O -N  <<END>>$output/tmp.ps
+-113 51 15 0 0 6 Depth of the 410 km discontinuity: Preliminary results
+END
+
+#Convert to jpg
+naz=${iname:0:19}
+m=map_
+l=_level$n
+nazwa=$m$naz$j$l
+gs -sDEVICE=jpeg -sOutputFile=$output/$nazwa.jpg - < $output/tmp.ps
+
+#Remove temp files
+rm $output/tmp.ps $output/tmp.cpt $output/tmp.grd $output/tmp.dat
