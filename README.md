@@ -2,7 +2,7 @@
 
 ## General Information
 
-**INTOMO** (Integrated Tomography Model) is a MATLAB-based GNSS tomography tool for analyzing the troposphere using both ground-based and space-based GNSS observations. 
+**INTOMO** (Integrated Tomography Model) is a MATLAB-based GNSS tomography tool based on Radon transform theory for the troposphere monitoring using both ground-based and space-based GNSS observations. 
 
 This software was developed as part of the PhD dissertation by **Adam Cegla** at **Wroclaw University of Environmental and Life Sciences**, Poland. It is part of the NAWA OPUS project titled:
 
