@@ -42,6 +42,12 @@ function ray = interateModelsA(model,ray,switches)
             %% Find ray path fragments intersecting tomography model
             raylon = ray.de_lon_ray_fin.*180/pi;
             id_in  = find(ray.de_lat_ray_fin.*180/pi <= model.lat_TOMO(end) & ray.de_lat_ray_fin.*180/pi >= model.lat_TOMO(1) & raylon <= model.lon_TOMO(end) & raylon >= model.lon_TOMO(1) & ray.de_alt_ray_fin.*1000 <= model.levels_TOMO(end) & ray.de_alt_ray_fin.*1000 >= model.levels_TOMO(1));
+            
+            fprintf('interateModelsA: length(id_in)=%d, alt range=[%.2f %.2f], levels_TOMO=[%.2f %.2f]\n', ...
+                length(id_in), ...
+                min(ray.de_alt_ray_fin)*1000, max(ray.de_alt_ray_fin)*1000, ...
+                model.levels_TOMO(1), model.levels_TOMO(end));
+            
             if length(id_in) > 1 && ~switches.refron
                 switches.stop = false; %
                 rayIND.refr = ray.refr(id_in);
