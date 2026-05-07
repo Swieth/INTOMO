@@ -58,8 +58,8 @@
 switches.time_mode = 'POSTPROCESSING';
 
 %% Data sources locations and associated names for source files, as well as destination folders for exported/visualised data,
-PATH_INSTALL = 'C:\Users\Adam\Desktop\INTOMO\'; 
-PATH_EXTERNALSAVE = 'C:\Users\Adam\Desktop\INTOMO\savefolder\'; 
+PATH_INSTALL = 'C:\Users\Tanja\Documents\INTOMO\INTOMO-main\'; 
+PATH_EXTERNALSAVE = 'C:\Users\Tanja\Documents\INTOMO\INTOMO-output\'; 
 addpath([PATH_INSTALL 'Tomography\CONF']);
 addpath([PATH_INSTALL 'Tomography\ENGINE']);
 addpath(genpath([PATH_INSTALL 'Tomography\EXTERNAL']));
@@ -78,7 +78,7 @@ PATH_SAVE = PATH_EXTERNALSAVE;
 pathCONF = [PATH_INSTALL 'Tomography/CONF'];
 
 %MISSION DATA
-PROJECT_NAME = 'project_name';
+PROJECT_NAME = 'exp3_20260101';
 
 %EPOCH RAY TRACING DATA FOLDER
 pathTOMO = [PATH_INSTALL 'Tomography/DATA/'  PROJECT_NAME '/WORK/'];
@@ -88,8 +88,8 @@ addpath(pathTOMO);
 
 if strcmp(switches.time_mode,'POSTPROCESSING') == 1
     %TOMO2 TIME settings
-    observation_start_TOMO = [2020 07 08 00 00 00]; %[year month day hour minute second] 
-    observation_end_TOMO = [2020 07 08 23 59 59]; %[year month day hour minute second] 
+    observation_start_TOMO = [2026 01 01 00 00 00]; %[year month day hour minute second] 
+    observation_end_TOMO = [2026 01 01 23 59 59]; %[year month day hour minute second] 
     estimation_interval_TOMO = 3600; %[sec]
     %ORBITS Data
     observation_start_SP3 =observation_start_TOMO; 
@@ -110,32 +110,32 @@ observation_interval_NWP = 3600;
 
 %% Processing parameters
 % Set if integrated tomography [yes/no]
-switches.integrated = 'yes';
-if switches.integrated == 'yes'
+switches.integrated = "yes";
+if switches.integrated == "yes"
     pathRO = [PATH_INSTALL 'Tomography/DATA/'  PROJECT_NAME '/RO' ];
 end
 
 %% INTOMO domains settings 
 %Ray Tracing Model
 model.radii = [6378.137, 6356.752314245]; %Earth radius
-lam1 =  10.50; %1st longitude of ERA5 data apriori file [deg]
-lam2 = 26.50; %2nd longitude of ERA5 data apriori file  [deg] 
+lam1 =  -12; %1st longitude of ERA5 data apriori file [deg]
+lam2 = 36; %2nd longitude of ERA5 data apriori file  [deg] 
 model.res = 0.25; %horizontal resolution of ERA5 grid [deg]
-lat1 = 47; %1st latitude of ERA5 data apriori file  [deg]
-lat2 = 57; %2nd latitude of ERA5 data apriori file [deg] 
+lat1 = 33; %1st latitude of ERA5 data apriori file  [deg]
+lat2 = 65; %2nd latitude of ERA5 data apriori file [deg] 
 unduFile= 'undu.mat'; 
 model.levels_TOMO_RT = unique([(0.01:0.1:2.6), (2.6:0.2:6), (6:0.5:16), (16:1:36), (36:5:86)]);
 model.ds = 2; %stepsize for RO ray tracing [km]
 switches.refron = false; %simulate ray path from only refraction values ['true'], simulate ray path from temp, pres, wvpres ['true']
-switches.ROres = 10; %frequency of LEO/GPS RO positions (1 is 50Hz, 10 is 5Hz etc)
+switches.ROres = 2; %frequency of LEO/GPS RO positions (1 is 50Hz, 10 is 5Hz etc)
 model.lat_TOMO_RT = [lat1:model.res:lat2];
 model.lon_TOMO_RT = [lam1:model.res:lam2];
 model.num_lat_TOMO_RT = size(model.lat_TOMO_RT,2);
 model.num_lon_TOMO_RT = size(model.lon_TOMO_RT,2);
 model.num_levels_TOMO_RT = size(model.levels_TOMO_RT,2);
 % Tomography Model
-model.lat_TOMO = [50.00 50.50 51.00 51.50 52.00];  %specifying the location of model faces [deg],
-model.lon_TOMO = [16.00 16.75 17.50 18.25 19.00 19.75]; % the location of model faces [deg],
+model.lat_TOMO = [43:2.0:55];  %specifying the location of model faces [deg],
+model.lon_TOMO = [-2:2.0:26]; % the location of model faces [deg],
 model.levels_TOMO = [0 500 1000 1500 2000 2500 3000 4500 6000 7500 9000 14500]; %specifying the location of model faces [m],
 model.GRIDboundaries = [lam1 lam2 model.res lat1 lat2 model.res];
 model.num_lat_TOMO = size(model.lat_TOMO,2);
@@ -144,10 +144,10 @@ model.num_levels_TOMO = size(model.levels_TOMO,2);
 clear lam1 lam2 lat1 lat2 res
 
 % bounding box - all stations outside bounding box defined as [west_limit_TOMO, east_limit_TOMO, south_limit_TOMO, north_limit_TOMO] are going to be removed from processing.
-model.west_limit_TOMO = 16.25;
-model.east_limit_TOMO = 19.50;
-model.south_limit_TOMO = 50.25;
-model.north_limit_TOMO = 51.75;
+model.west_limit_TOMO = -1.5;
+model.east_limit_TOMO = 25.5;
+model.south_limit_TOMO = 43.5;
+model.north_limit_TOMO = 54.5;
 
 % cut off angle for slant measurements
 model.cut_off_angle = 10;
@@ -172,7 +172,7 @@ addpath(pathMETEO);
 %% Apriori/Initial conditions for tomography models {DETER/ERA5}
 % >DETER - deterministic gpt/gpt2/UNB3mm models
 % >ERA5 - ERA5 model
-switches.aprModel='ERA5';
+switches.aprModel='DETER';
 observation_interval_APRIORI = 3600;
 
 %% Ground-based data observations path
@@ -201,7 +201,7 @@ switches.method = {'KALMAN'};
 switches.filter = {'ROBUST'}; %% not tested in other settings
 % solution{'REAL'/'SYNTHETIC'} chose whether you use REAL data (SWD/SIWV) hence the observation uncertainty is set realistic or the data provided are SYNTHETIC (SWD/SIWV)
 % and the uncertainties are set to minimum (0.001m)
-switches.solution = {'REAL'}; 
+switches.solution = {'SYNTHETIC'}; 
 % decorelation{'NO'/'YES'} chose whether you need to use the A matrix decorrelation procedure (will remove linearly dependent rows) for details please consult:
 % Rohm W., Zhang K., Bosy J. Limited constraint, robust Kalman filtering for GNSS troposphere tomography Atmospheric Measurement Techniques, Vol. 7 No. 5, 2014, pp. 1475-1486
 % DOI: 10.5194/amt-7-1475-2014
@@ -212,7 +212,7 @@ switches.phi = {'identity'};
 % parametrization{'constant'/'bilinear-h'} chose whether you want to use the constant parametrization using constant value of Nw/WV in each voxel ('constant'), trilinear parametrization
 % based on bilinear parametrization with height changes according to PWV
 % changes ('bilinear-h') [Perler et al. 2011, Ding et al.2018]
-switches.parametrization = {'bilinear-h'};
+switches.parametrization = {'constant'};
 % grid parameterization
 switches.regular = {'yes'}; %only regular node parametetriaztion is available in this version of INTOMO 
 
