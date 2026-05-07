@@ -58,30 +58,53 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                     % (ascending/descending). In order to work properly, 
                     % .nc file must contain the same number of excess phase 
                     % values and LEO/GPS coordinates.
-                    if length(station.ro(roit).exL2)==size(GPScoord,2)
-                        if sum(station.ro(roit).exL2) > 0 && sum(diff(station.ro(roit).exL2)) > 0
-                            posit = [1:switches.ROres:size(GPScoord,1)];
-                            idex = find(exL2>30); %find excess phases larger than 30m to decrease processing time
-                            idex = round(min(idex)./switches.ROres,0);
-                            limit = length(posit);
-                            step = 1;
-                        elseif sum(station.ro(roit).exL2) < 0
-                            posit = [1:switches.ROres:size(GPScoord,1)];
-                            idex = find(exL2>(min(exL2)+30));
-                            idex = round(max(idex)./switches.ROres,0);
-                            limit = 1;
-                            step = -1;
+                    posit = [1:switches.ROres:size(GPScoord,1)];
+                    if strcmp(switches.solution,'REAL')
+                        % REAL mode: original logic - exL2 and coordinates on same grid,
+                        if length(station.ro(roit).exL2)==size(GPScoord,2)
+                            if sum(station.ro(roit).exL2) > 0 && sum(diff(station.ro(roit).exL2)) > 0
+                                idex = find(exL2>30);
+                                idex = round(min(idex)./switches.ROres,0);
+                                limit = length(posit);
+                                step = 1;
+                            elseif sum(station.ro(roit).exL2) < 0
+                                idex = find(exL2>(min(exL2)+30));
+                                idex = round(max(idex)./switches.ROres,0);
+                                limit = 1;
+                                step = -1;
+                            end
+                        else
+                            warning('spaceRT: Improper structure of .nc radiooccultation file. Ray tracing all available LEO postions')
+                            if sum(station.ro(roit).exL2) > 0 && sum(diff(station.ro(roit).exL2)) > 0
+                                posit = [1:switches.ROres:size(GPScoord,1)];
+                                idex = 1;
+                                limit = length(posit);
+                                step = 1;
+                            elseif sum(station.ro(roit).exL2) < 0
+                                posit = [1:switches.ROres:size(GPScoord,1)];
+                                idex = size(GPScoord,1);
+                                limit = 1;
+                                step = -1;
+                            end
                         end
                     else
-                        warning('spaceRT: Improper structure of .nc radiooccultation file. Ray tracing all available LEO postions')
-                        if sum(station.ro(roit).exL2) > 0 && sum(diff(station.ro(roit).exL2)) > 0
-                            posit = [1:switches.ROres:size(GPScoord,1)];
+                        % SYNTHETIC mode: exL2 is never used in computation.
+                        % Determine ascending/descending via dot product of
+                        % LEO->GPS vector with LEO velocity at mid-point.
+                        mid_idx = round(length(posit)/2);
+                        leo_mid = LEOcoord(posit(mid_idx),:);
+                        gps_mid = GPScoord(posit(mid_idx),:);
+                        v_leo   = LEOcoord(posit(mid_idx)+1,:) - LEOcoord(posit(mid_idx)-1,:);
+                        leo2gps = gps_mid - leo_mid;
+                        dot_C   = dot(leo2gps, v_leo);
+                        if dot_C < 0
+                            % setting/descending
                             idex = 1;
                             limit = length(posit);
                             step = 1;
-                        elseif sum(station.ro(roit).exL2) < 0
-                            posit = [1:switches.ROres:size(GPScoord,1)];
-                            idex = size(GPScoord,1);
+                        else
+                            % rising/ascending
+                            idex = length(posit);
                             limit = 1;
                             step = -1;
                         end
