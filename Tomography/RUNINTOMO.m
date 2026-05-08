@@ -102,16 +102,12 @@ if strcmp(switches.parametrization,'constant')
          end
          %d)forming model for all observation hours
          NwT = NwT';
-         synthetic.Nw_num(epoch,:) = NwT;
-         synthetic.Nw_out_num = [];
          apriori.Nw_DETER_num(epoch,:) = NwT;
          apriori.Nw_DETER_out_num = [];
          %%%%%%%%%WATER VAPOUR%%%%%%%%%%%%
          R = 461.525;
          WVT = 100*E./(R*T)*1000;
          WVT = WVT';
-         synthetic.WV_num(epoch,:) = WVT;
-         synthetic.WV_out_num = [];
          clear NwT Nw3DT WVT WV3DT R T E T3D E3D
     end
 elseif  strcmp(switches.parametrization,'bilinear-h')  
@@ -131,16 +127,12 @@ elseif  strcmp(switches.parametrization,'bilinear-h')
          end
          %d)forming model for all observation hours
          NwT = NwT';
-         synthetic.Nw(epoch,:) = NwT;
-         synthetic.Nw_out = [];
          apriori.Nw_DETER(epoch,:) = NwT;
          apriori.Nw_DETER_out = [];
          %%%%%%%%%WATER VAPOUR%%%%%%%%%%%%
          R = 461.525;
          WVT = 100*E./(R*T)*1000;
          WVT = WVT';
-         synthetic.WV(epoch,:) = WVT;
-         synthetic.WV_out = [];
          clear NwT Nw3DT WVT WV3DT R T E T3D E3D
     end
 end
@@ -148,10 +140,10 @@ end
 %% Collect RO data
 if strcmp(switches.integrated,'yes')
     load(confFILE,'pathRO');
-    [cordRO] = findRO(pathRO,obs_set,switches);
-    %[cordRO] = [];
+    [coordRO] = findRO(pathRO,obs_set,switches);
+    %[coordRO] = [];
 else
-    cordRO = [];
+    coordRO = [];
 end
 
 %% Assing apriori model values to tomography variables
@@ -204,9 +196,9 @@ end
 station_filename = [pathTOMO 'station.mat'];
 if exist(station_filename,'file')==0
    if strcmp(switches.solution,'SYNTHETIC')
-       [station] = construct_station_LAB(model.BLh,model.BLH,0,0,0,model.NAME,PRNn,SP3Xn,SP3Yn,SP3Zn,obs_set.observation_set_SP3,model.cut_off_angle,cordRO,switches,0,0,0,0);
+       [station] = construct_station_LAB(model.BLh,model.BLH,0,0,0,model.NAME,PRNn,SP3Xn,SP3Yn,SP3Zn,obs_set.observation_set_SP3,model.cut_off_angle,coordRO,switches,0,0,0,0);
    elseif strcmp(switches.solution,'REAL')
-       [station] = construct_station_LAB(model.BLh,model.BLH,ZTDA,MZTDA,ZHD,model.NAME,PRNn,SP3Xn,SP3Yn,SP3Zn,obs_set.observation_set_SP3,model.cut_off_angle,cordRO,switches,DGNA,MDGNA,DGEA,MDGEA);
+       [station] = construct_station_LAB(model.BLh,model.BLH,ZTDA,MZTDA,ZHD,model.NAME,PRNn,SP3Xn,SP3Yn,SP3Zn,obs_set.observation_set_SP3,model.cut_off_angle,coordRO,switches,DGNA,MDGNA,DGEA,MDGEA);
    end
    save(station_filename,'station');
 else

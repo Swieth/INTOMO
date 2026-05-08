@@ -18,7 +18,7 @@ function Q = covarianceAprRT(Nw_apr,A,num_lat,num_lon,levels,BLh_pudel,num_Nw,va
 %---------------------------------------------------------------------------------------------------
 
 
-if exist('switches','var') && strcmp(switches.regular{1},'no')
+if exist('switches','var') && strcmp(switches.regular,'no')
     Nw_NWP_irr = Nw_apr;
     try
         if strcmp(switches.apriori,'WRF')
@@ -78,7 +78,7 @@ else
                 plot(modQ,h,'or');
             end
         end
-        if ~exist('switches','var') || strcmp(switches.regular{1},'yes')
+        if ~exist('switches','var') || strcmp(switches.regular,'yes')
             modQl = repmat(modQ',num_lat*num_lon,1);
             modQ = reshape(modQl,num_lat*num_lon*(levels-1),1);
         end

@@ -30,7 +30,7 @@ if switches.cutModel
         num_lat = length(model.mid_lat_TOMO);
         num_lon = length(model.mid_lon_TOMO);
         num_lvl = length(model.levels_TOMO)-1;
-    elseif strcmp(switches.parameterization,'nodes')
+    elseif strcmp(switches.parametrization,'nodes')
         num_lat = length(model.lat_TOMO);
         num_lon = length(model.lon_TOMO);
         num_lvl = length(model.levels_TOMO);

@@ -29,7 +29,7 @@ function [output] = intomolab(station,model,values,pathTOMO,path_save,observatio
 
 %% Set initial parameters
 if isempty(switches.observations{1,1})  && isempty(switches.observations{1,2})
-    sprintf('%s','User did not make a choice of observation type, DEFAULT: SWD \n');
+    fprintf('%s','User did not make a choice of observation type, DEFAULT: SWD \n');
     switches.observations{1,1} = 'SWD';
 end
 if strcmpi(switches.observations{1,1},'SWD')
@@ -39,14 +39,14 @@ else
 end
 % Set apriori parameters
 if isempty(switches.apriori{1,1}) && isempty(switches.apriori{1,2})
-    sprintf('%s','User did not make a choice of apriori information, checking values variable \n');
+    fprintf('%s','User did not make a choice of apriori information, checking values variable \n');
     if isempty(values.num_Nw)
         switches.apriori{1,1} = 'INNER';
-        sprintf('%s','INNER apriori was detected and set \n');
+        fprintf('%s','INNER apriori was detected and set \n');
     end
     if isempty(values.num_Nw_out)
         switches.apriori{1,2} = 'OUTER';
-        sprintf('%s','OUTER apriori was detected and set \n');
+        fprintf('%s','OUTER apriori was detected and set \n');
     end    
 end
 if strcmpi(switches.apriori{1,1},'INNER')
@@ -61,7 +61,7 @@ else
 end
 % Set contraints
 if isempty(switches.constraints{1,1})  && isempty(switches.constraints{1,2}) 
-    sprintf('%s','User did not make a choice of constraints information, DEFAULT: HORIZONTAL NO, VERTICAL NO  \n');
+    fprintf('%s','User did not make a choice of constraints information, DEFAULT: HORIZONTAL NO, VERTICAL NO  \n');
     switches.constraints{1,1} = 'NO';
     switches.constraints{1,2} = 'NO';
 end
@@ -79,8 +79,8 @@ else
 end
 % Set stacking parameters
 if isempty(switches.stacking{1,1})
-    sprintf('%s','User did not make a choice of use of stacking, DEFAULT: NO  \n');
-    switches.constraints{1,1} = 'NO';
+    fprintf('%s','User did not make a choice of use of stacking, DEFAULT: NO  \n');
+    switches.stacking{1,1} = 'NO';
 end
 if strcmpi(switches.stacking{1,1},'NO')
     switches.run_STACKING = 1;
@@ -90,26 +90,26 @@ elseif isnumeric(switches.stacking{1,1})
     solution_epochs = 1:switches.run_STACKING:size(observation_set,1);
 end
 % Set filter parameters
-if isempty(switches.filter{1,1})
-    sprintf('%s','User did not make a choice of use of FILTER, DEFAULT: KALMAN  \n');
-    switches.constraints{1,1} = 'KALMAN';
+if isempty(switches.filter)
+    fprintf('%s','User did not make a choice of use of FILTER, DEFAULT: KALMAN  \n');
+    switches.filter = 'KALMAN';
 end
-if strcmpi(switches.filter{1,1},'KALMAN')
+if strcmpi(switches.filter,'KALMAN')
     switches.run_KALMAN = 0;
-elseif strcmpi(switches.filter{1,1},'ROBUST') %not tested
+elseif strcmpi(switches.filter,'ROBUST') %not tested
     switches.run_KALMAN = 1;
 end
 % Set solution paramaters
-if isempty(switches.solution{1,1})
-    sprintf('%s','User did not make a choice of use of type of solution, DEFAULT: REAL  \n');
-    switches.solution{1,1} = 'REAL';
+if isempty(switches.solution)
+    fprintf('%s','User did not make a choice of use of type of solution, DEFAULT: REAL  \n');
+    switches.solution = 'REAL';
 end
 % Set decorelation parameters
-if isempty(switches.decorelation{1,1}) %not tested
-    sprintf('%s','User did not make a choice of decorrelation of matrix A, DEFAULT: NO  \n');
-    switches.decorelation{1,1} = 'NO';
+if isempty(switches.decorelation) %not tested
+    fprintf('%s','User did not make a choice of decorrelation of matrix A, DEFAULT: NO  \n');
+    switches.decorelation = 'NO';
 end
-if strcmpi(switches.decorelation{1,1},'YES') 
+if strcmpi(switches.decorelation,'YES') 
     switches.run_DECOR = 1;
 else
     switches.run_DECOR = 0;

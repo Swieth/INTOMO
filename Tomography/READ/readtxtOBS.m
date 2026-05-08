@@ -42,6 +42,7 @@ if s ~= 0
     else
         days = 1;
     end
+    epochs_per_day = ceil(size(observation_set,1) / double(days));
     for ep = 1:days
         name = char(names(ep));
         pathATMdir = [pathATM,name];
@@ -130,8 +131,8 @@ if s ~= 0
         Table.mGradN = cell2mat(rawNumericColumns(:, 5));
         Table.mGradE = cell2mat(rawNumericColumns(:, 6));
         ind = [];
-        for i = 1:size(NAME,1)
-            id = find(Table.ID == NAME(i));
+        for iName = 1:size(NAME,1)
+            id = find(Table.ID == NAME(iName));
             ind = [ind;id];
         end
         Table = Table(ind,:);
@@ -149,13 +150,15 @@ if s ~= 0
             MDGEA = [];
         end
         aa = char(Table.Date);
-        for k = 1:24
+        for k = 1:epochs_per_day
             epoch = epoch + 1;
+            if epoch > size(observation_set,1); break; end
             epochdate = datetime(observation_set(epoch,3),observation_set(epoch,7),observation_set(epoch,8),observation_set(epoch,9),0,0);
             try
                 id = find(datetime(str2num(aa(:,1:4)),str2num(aa(:,6:7)),str2num(aa(:,9:10)),str2num(aa(:,12:13)),str2num(aa(:,15:16)),0) == epochdate);
-            catch
-                disp(a)
+            catch ME
+                warning('readtxtOBS: failed to parse epoch %s (%s)', datestr(epochdate), ME.message);
+                id = [];
             end
                 Tableepoch = Table(id,:);
             [idname,ia,ib] = intersect(Tableepoch.ID,NAME);

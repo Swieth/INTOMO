@@ -101,7 +101,7 @@ if ~exist(save_filename,'file')
             sat = 0;
        end
    catch
-       warning('initial OBS: Failed to calculate RT for station number: ',num2str(nr))
+       warning('initialOBS:rtFailed', 'initial OBS: Failed to calculate RT for station number: %s', num2str(nr))
    end    
    if strcmp(switches.parametrization,'bilinear-h')
         A = A_nodes';

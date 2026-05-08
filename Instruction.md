@@ -117,7 +117,7 @@ The functions were described by assigning them into processing stages from point
 - `interSP3.m` — find satellite coordinates matching the GNSS stations
 - `downloadORB.m` — download SP3 data
 - `findRO.m` — read RO data (excess phase and LEO-GNSS orbits)
-- `RUNTOMO.m` — define input variables for tomography processing
+- `RUNINTOMO.m` — define input variables for tomography processing
 - `readBLh.m` — read coordinates of GNSS stations
 
 ### ad.2.

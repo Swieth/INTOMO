@@ -27,7 +27,7 @@
 %        .decorelation{'NO'/'YES'} - decorelation type %not tested
 %        .aprModel{'DETER'/'ERA5'} - apriori model source
 %        .amtrix{folder_name} - name for work folder to contain observation matrices 
-%        .parameterization{'constant'} - type of parameterization
+%        .parametrization{'constant'} - type of parametrization
 %        .phi{'identity'} - include identity matrix
 %        .method{'KALMAN'/'LSQ'} - Kalman or LSQ processing
 %        .totalN{true/false} - processing in wet refractivity or (total) refracitivty
@@ -159,7 +159,7 @@ model.north_limit_TOMO = 54.5;
 model.cut_off_angle = 10;
 
 % GNSS station coordinates format
-switches.coord = {'FORMATTED'};
+switches.coord = 'FORMATTED';
 
 % Randomly filter out GNSS station in selected range from each other ('0' to switch off)
 switches.stat_range = 0; %[km]
@@ -200,27 +200,27 @@ switches.constraints = {'',''}; %% not tested
 % will be helpful in constraint solution in case of low number of observations might smooth out active weather.
 switches.stacking = {'NO'}; 
 % method{'KALMAN'/'LSQ'} chose the method for the solution - Kalman filter ('KALMAN') or Least Squares ('LSQ')
-switches.method = {'KALMAN'}; 
+switches.method = 'KALMAN'; 
 % filter{'KALMAN'/'ROBUST'} chose the level of Kalman filter robustness, standard KF - 'KALMAN', robust KF - 'ROBUST' for details please refere to the paper:
 % Rohm W., Zhang K., Bosy J. Limited constraint, robust Kalman filtering for GNSS troposphere tomography Atmospheric Measurement Techniques, Vol. 7 No. 5, 2014, pp. 1475-1486
 % DOI: 10.5194/amt-7-1475-2014
-switches.filter = {'ROBUST'}; %% not tested in other settings
+switches.filter = 'ROBUST'; %% not tested in other settings
 % solution{'REAL'/'SYNTHETIC'} chose whether you use REAL data (SWD/SIWV) hence the observation uncertainty is set realistic or the data provided are SYNTHETIC (SWD/SIWV)
 % and the uncertainties are set to minimum (0.001m)
-switches.solution = {'SYNTHETIC'}; 
+switches.solution = 'SYNTHETIC'; 
 % decorelation{'NO'/'YES'} chose whether you need to use the A matrix decorrelation procedure (will remove linearly dependent rows) for details please consult:
 % Rohm W., Zhang K., Bosy J. Limited constraint, robust Kalman filtering for GNSS troposphere tomography Atmospheric Measurement Techniques, Vol. 7 No. 5, 2014, pp. 1475-1486
 % DOI: 10.5194/amt-7-1475-2014
-switches.decorelation = {'NO'}; %% not available yet
+switches.decorelation = 'NO'; %% not available yet
 % phi{'identity'} chose whether you want to use the identity matrix for the propagation of wet refractivity ('identity')
 % or define changes based on WRF data ('WRF', this option works only if WRF data are used as a priori information)
-switches.phi = {'identity'}; 
+switches.phi = 'identity'; 
 % parametrization{'constant'/'bilinear-h'} chose whether you want to use the constant parametrization using constant value of Nw/WV in each voxel ('constant'), trilinear parametrization
 % based on bilinear parametrization with height changes according to PWV
 % changes ('bilinear-h') [Perler et al. 2011, Ding et al.2018]
-switches.parametrization = {'constant'};
+switches.parametrization = 'constant';
 % grid parameterization
-switches.regular = {'yes'}; %only regular node parametetriaztion is available in this version of INTOMO 
+switches.regular = 'yes'; %only regular node parametetriaztion is available in this version of INTOMO 
 
 %Folder to save observation matrix A
 if strcmp(switches.parametrization,'bilinear-h')

@@ -115,7 +115,7 @@
 - `decorelation{'NO'/'YES'}` — decorelation type
 - `aprModel{'DETER'/'ERA5'}` — a priori model source
 - `amtrix{folder_name}` — name for work folder to contain observation matrices
-- `parameterization{'constant'}` — type of parameterization
+- `parametrization{'constant'}` — type of parametrization
 - `phi{'identity'}` — include identity matrix
 - `method{'KALMAN'/'LSQ'}` — Kalman or LSQ processing
 - `totalN{true/false}` — processing in wet refractivity or (total) refractivity
