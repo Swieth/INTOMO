@@ -61,7 +61,7 @@ if ~exist([pathTOMO,'model.mat'],'file')
         model =  ERA5GridTOMO(ERAname, model,model.GRIDboundaries,date0,pathMETEO,pathCONF,observation_start_TOMO,epoch,unduFile,switches);
         disp([ERAname,'_',num2str(epoch)])
     end   
-    save([pathTOMO,'model.mat'],'model');
+    save([pathTOMO,'model.mat'],'model','-v7.3');
     disp('Tomography and ray tracing domain data(model.mat file) calculated')
 else
     load([pathTOMO,'model.mat'],'model');
@@ -148,7 +148,8 @@ end
 %% Collect RO data
 if strcmp(switches.integrated,'yes')
     load(confFILE,'pathRO');
-    [cordRO] = findRO(pathRO,obs_set);
+    [cordRO] = findRO(pathRO,obs_set,switches);
+    %[cordRO] = [];
 else
     cordRO = [];
 end
@@ -191,6 +192,7 @@ for epoch = 1:size(obs_set.observation_set,1)
         apriori.WV_ERA5(epoch,:) = WVT;
     end   
 end
+
 
 %% Calculate the dry part of Zenith Total Delay
 if strcmp(switches.solution,'REAL')
@@ -286,7 +288,7 @@ if strcmp(switches.parametrization,'bilinear-h')
 end
 toc
 load(confFILE,'PATH_SAVE');
-save([pathTOMO,'\model.mat'],'model','station','values','pathTOMO','PATH_SAVE','obs_set','switches','apriori','PROJECT_NAME')
+save([pathTOMO,'\model.mat'],'model','station','values','pathTOMO','PATH_SAVE','obs_set','switches','apriori','PROJECT_NAME','-v7.3')
 
 %% Tomography processing start
 switches.project_name = PROJECT_NAME;

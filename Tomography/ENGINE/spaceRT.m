@@ -55,8 +55,8 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                     end
                     exL2 = station.ro(roit).exL2;
                     % Get positions interval based on RO netCDF structure
-                    % (ascending/descending). In order to work properly, 
-                    % .nc file must contain the same number of excess phase 
+                    % (ascending/descending). In order to work properly,
+                    % .nc file must contain the same number of excess phase
                     % values and LEO/GPS coordinates.
                     posit = [1:switches.ROres:size(GPScoord,1)];
                     if strcmp(switches.solution,'REAL')
@@ -122,6 +122,13 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                         X_R = cspice_georec(llaR(2)*pi()/180, llaR(1)*pi()/180, llaR(3)/1000, radii(1),(radii(1)-radii(2))/radii(1));
                         %% Calculate excess phase
                         rayRT = voxel_dist_3D_combined(model.refrRT{epoch},0,model.levels_TOMO_RT'*1000,X_T',X_R',model.ds,0.5,model.rWGS,0,model.LAT,model.LON,model.temp{epoch},model.pres{epoch},model.wvpr{epoch},switches); 
+                        
+                        fprintf('\n RO ray: alt_pass=%d, diff_dist=%.4f km, n_iter=%d\n', ...
+                            isfield(rayRT,'alt_pass'), ...
+                            rayRT.diff_dist(end), ...
+                            length(rayRT.diff_dist));
+                        
+                        
                         rayRT2(i).rayRT = rayRT;
                         %% Calculate excess phase in tomography model
                         rayRT = interateModelsA(model,rayRT,switches); 

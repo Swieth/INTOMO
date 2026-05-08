@@ -1,4 +1,4 @@
-function [coordRO] = findRO(pathRO,obs_set)
+function [coordRO] = findRO(pathRO,obs_set,switches)
 %% Function to find RO matching to dates of simulated ground-based tomography
 % Input
 %   pathRO.........  path to folder with RO.nc files
