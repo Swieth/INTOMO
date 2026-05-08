@@ -111,7 +111,8 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                     end
                     %% Prepare data for ray tracing
                     for i = idex:step:limit 
-                        disp(posit(i))
+                        %disp(posit(i))
+                        fprintf('\n spaceRT: sample index=%d / %d\n', posit(i), posit(end));
                         % Recalculate coordinates to ECI
                         X_Tinit = [GPScoord(posit(i),1),GPScoord(posit(i),2),GPScoord(posit(i),3)]; 
                         X_Rinit = [LEOcoord(posit(i),1),LEOcoord(posit(i),2),LEOcoord(posit(i),3)];
@@ -123,7 +124,7 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                         %% Calculate excess phase
                         rayRT = voxel_dist_3D_combined(model.refrRT{epoch},0,model.levels_TOMO_RT'*1000,X_T',X_R',model.ds,0.5,model.rWGS,0,model.LAT,model.LON,model.temp{epoch},model.pres{epoch},model.wvpr{epoch},switches); 
                         
-                        fprintf('\n RO ray: alt_pass=%d, diff_dist=%.4f km, n_iter=%d\n', ...
+                        fprintf('RO ray: alt_pass=%d, diff_dist=%.4f km, n_iter=%d\n', ...
                             isfield(rayRT,'alt_pass'), ...
                             rayRT.diff_dist(end), ...
                             length(rayRT.diff_dist));

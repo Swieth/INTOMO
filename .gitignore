@@ -1,2 +1,17 @@
 Tomography/DATA/exp3_20260101/METEO/ERA5_2026-1-1.nc
+Tomography/DATA/exp3_20260101/WORK/model.mat
+Tomography/DATA/exp3_20260101/WORK/station.mat
 Tomography/READ/findRO.asv
+Tomography/DATA/exp1_20260101
+Tomography/DATA/exp1_20260101_smaller
+Tomography/DATA/exp1_20260102
+Tomography/DATA/exp1_20260103
+Tomography/DATA/exp2_20260101
+Tomography/DATA/exp2_20260102
+Tomography/CONF/exp1_20260101.mat
+Tomography/CONF/exp1_20260101_smaller.mat
+Tomography/CONF/exp1_20260102.mat
+Tomography/CONF/exp1_20260103.mat
+Tomography/CONF/exp2_20260101.mat
+Tomography/CONF/exp2_20260102.mat
+
