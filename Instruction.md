@@ -6,7 +6,7 @@ This is the Integrated Tomography Model (INTOMO) v.1.0 library. INTOMO is an int
 
 Please note that this is the first experimental version of INTOMO v1.0, and some processing options may not work properly. In case of any issues, don't hesitate to contact: adam.cegla@upwr.edu.pl.
 
-The library is written for MATLAB 2018a or newer. It requires the NAIF CSPICE toolkit (MATLAB/MEX), the MATLAB Aerospace Toolbox and the MATLAB Mapping Toolbox.
+The library is written for MATLAB 2018a or newer. It requires the NAIF CSPICE toolkit (MATLAB/MEX), the MATLAB Aerospace Toolbox, the MATLAB Mapping Toolbox, and the MATLAB Statistics and Machine Learning Toolbox.
 
 ## 2. References
 

@@ -17,6 +17,7 @@ This software was developed as part of the PhD dissertation by **Adam Cegla** at
 - NAIF CSPICE (MATLAB/MEX interface)
 - MATLAB Aerospace Toolbox
 - MATLAB Mapping Toolbox
+- MATLAB Statistics and Machine Learning Toolbox
 
 ---
 
