@@ -4,6 +4,5 @@ Tomography/DATA/exp*
 Tomography/CONF/exp*.mat
 
 .cursor
-docs/*
 
 *.asv
