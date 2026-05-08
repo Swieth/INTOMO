@@ -14,8 +14,9 @@ This software was developed as part of the PhD dissertation by **Adam Cegla** at
 ### Requirements
 
 - MATLAB 2018a or newer
-- CSPICE library
-- (Optional) MATLAB Aerospace Toolbox
+- NAIF CSPICE (MATLAB/MEX interface)
+- MATLAB Aerospace Toolbox
+- MATLAB Mapping Toolbox
 
 ---
 
