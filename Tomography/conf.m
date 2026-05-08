@@ -58,20 +58,25 @@
 switches.time_mode = 'POSTPROCESSING';
 
 %% Data sources locations and associated names for source files, as well as destination folders for exported/visualised data,
-PATH_INSTALL = 'C:\Users\Tanja\Documents\INTOMO\INTOMO-main\'; 
-PATH_EXTERNALSAVE = 'C:\Users\Tanja\Documents\INTOMO\INTOMO-output\'; 
-addpath([PATH_INSTALL 'Tomography\CONF']);
-addpath([PATH_INSTALL 'Tomography\ENGINE']);
-addpath(genpath([PATH_INSTALL 'Tomography\EXTERNAL']));
-addpath([PATH_INSTALL 'Tomography\PPROCESS']);
-addpath([PATH_INSTALL 'Tomography\READ']);
-addpath([PATH_INSTALL 'Tomography\WRITE']);
-addpath([PATH_INSTALL 'Tomography\VISUAL']);
-addpath([PATH_INSTALL 'Tomography\DATA']);
-addpath([PATH_INSTALL 'RayTracer\Frgn_Fcn']);
-addpath([PATH_INSTALL 'RayTracer\Other_Fcn']);
-addpath([PATH_INSTALL 'RayTracer\Tomo_Fcn']);
-addpath([PATH_INSTALL 'RayTracer\UndulationFiles']);
+% Set both paths to absolute folders that exist on your machine.
+% Use forward slashes ('/') on every OS; a trailing slash is required.
+% Examples:
+%   Linux/macOS : '/home/user/INTOMO/'          '/home/user/INTOMO-output/'
+%   Windows     : 'C:/Users/user/INTOMO/'       'D:/INTOMO-output/'
+PATH_INSTALL      = '/path/to/INTOMO/';
+PATH_EXTERNALSAVE = '/path/to/INTOMO-output/';
+addpath([PATH_INSTALL 'Tomography/CONF']);
+addpath([PATH_INSTALL 'Tomography/ENGINE']);
+addpath(genpath([PATH_INSTALL 'Tomography/External']));
+addpath([PATH_INSTALL 'Tomography/PPROCESS']);
+addpath([PATH_INSTALL 'Tomography/READ']);
+addpath([PATH_INSTALL 'Tomography/WRITE']);
+addpath([PATH_INSTALL 'Tomography/VISUAL']);
+addpath([PATH_INSTALL 'Tomography/DATA']);
+addpath([PATH_INSTALL 'RayTracer/Frgn_Fcn']);
+addpath([PATH_INSTALL 'RayTracer/Other_Fcn']);
+addpath([PATH_INSTALL 'RayTracer/Tomo_Fcn']);
+addpath([PATH_INSTALL 'RayTracer/UndulationFiles']);
 
 % Select directory for saving the output 
 PATH_SAVE = PATH_EXTERNALSAVE;
@@ -82,6 +87,7 @@ PROJECT_NAME = 'exp3_20260101';
 
 %EPOCH RAY TRACING DATA FOLDER
 pathTOMO = [PATH_INSTALL 'Tomography/DATA/'  PROJECT_NAME '/WORK/'];
+if ~exist(pathTOMO, 'dir'); mkdir(pathTOMO); end
 addpath(pathTOMO);
 
 %% Time slot for tomography processing and time interval of data sources
@@ -225,6 +231,8 @@ end
 
 %% Export format
 pathEXPORT = [PATH_SAVE PROJECT_NAME '/OUT/'];
+if ~exist(pathEXPORT, 'dir'); mkdir(pathEXPORT); end
+if ~exist([PATH_SAVE PROJECT_NAME '/KAL/'], 'dir'); mkdir([PATH_SAVE PROJECT_NAME '/KAL/']); end
 %% Save conf file settings
 save([PATH_INSTALL 'Tomography/CONF/' PROJECT_NAME '.mat']);
 clearvars -except PATH_INSTALL PROJECT_NAME time_mode;

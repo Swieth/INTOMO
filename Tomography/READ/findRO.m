@@ -38,12 +38,12 @@ if ~isempty(names)
             j = j + 1;
             k(j) = fileIdx;
             spirename = char(names(fileIdx));
-            year = ncreadatt([pathRO,'\', spirename],'/','year');
-            month = ncreadatt([pathRO,'\', spirename],'/','month');
-            day = ncreadatt([pathRO,'\', spirename],'/','day');
-            hour = ncreadatt([pathRO,'\', spirename],'/','hour');
-            minute = ncreadatt([pathRO,'\', spirename],'/','minute');
-            second = ncreadatt([pathRO,'\', spirename],'/','second');
+            year = ncreadatt([pathRO,'/', spirename],'/','year');
+            month = ncreadatt([pathRO,'/', spirename],'/','month');
+            day = ncreadatt([pathRO,'/', spirename],'/','day');
+            hour = ncreadatt([pathRO,'/', spirename],'/','hour');
+            minute = ncreadatt([pathRO,'/', spirename],'/','minute');
+            second = ncreadatt([pathRO,'/', spirename],'/','second');
             date{j,1} = [year,month,day,hour,minute,round(second)];
             dateRO{j,1} = sprintf('%04d%02d%02d%02d',year,month,day,hour);
         end
@@ -66,28 +66,28 @@ if ~isempty(names)
                     atmPhs=false;
                 end
                 if atmPhs
-                    xLeo = ncread([pathRO,'\', spirename],'xLeo');
-                    yLeo = ncread([pathRO,'\', spirename],'yLeo');
-                    zLeo = ncread([pathRO,'\', spirename],'zLeo');
-                    xGps = ncread([pathRO,'\', spirename],'xGps');
-                    yGps = ncread([pathRO,'\', spirename],'yGps');
-                    zGps = ncread([pathRO,'\', spirename],'zGps');
+                    xLeo = ncread([pathRO,'/', spirename],'xLeo');
+                    yLeo = ncread([pathRO,'/', spirename],'yLeo');
+                    zLeo = ncread([pathRO,'/', spirename],'zLeo');
+                    xGps = ncread([pathRO,'/', spirename],'xGps');
+                    yGps = ncread([pathRO,'/', spirename],'yGps');
+                    zGps = ncread([pathRO,'/', spirename],'zGps');
                 else
-                    xLeo = ncread([pathRO,'\', spirename],'xLeoLR');
-                    yLeo = ncread([pathRO,'\', spirename],'yLeoLR');
-                    zLeo = ncread([pathRO,'\', spirename],'zLeoLR');
-                    xGps = ncread([pathRO,'\', spirename],'xGnssLR');
-                    yGps = ncread([pathRO,'\', spirename],'yGnssLR');
-                    zGps = ncread([pathRO,'\', spirename],'zGnssLR');
+                    xLeo = ncread([pathRO,'/', spirename],'xLeoLR');
+                    yLeo = ncread([pathRO,'/', spirename],'yLeoLR');
+                    zLeo = ncread([pathRO,'/', spirename],'zLeoLR');
+                    xGps = ncread([pathRO,'/', spirename],'xGnssLR');
+                    yGps = ncread([pathRO,'/', spirename],'yGnssLR');
+                    zGps = ncread([pathRO,'/', spirename],'zGnssLR');
                 end
-                exL2 = ncread([pathRO,'\', spirename],'exL2');
-                exL1 = ncread([pathRO,'\', spirename],'exL1');
+                exL2 = ncread([pathRO,'/', spirename],'exL2');
+                exL1 = ncread([pathRO,'/', spirename],'exL1');
                 
                 f2 = 1227.60; % default (MHz)
 
                 if strcmp(switches.solution,'REAL')
                     try
-                        occfreq2 = ncreadatt([pathRO,'\', spirename], '/', 'occfreq2');
+                        occfreq2 = ncreadatt([pathRO,'/', spirename], '/', 'occfreq2');
                         f2 = occfreq2 / 1e6; % MHz
                     catch
                         warning('findRO: occfreq2 not found, using default f2=1227.60 MHz');

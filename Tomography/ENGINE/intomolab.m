@@ -360,7 +360,7 @@ if switches.run_SWD
                     thin.Q = diag(Q);
                     %% Save Kalman parameters to output file
                     try
-                        save([path_save,'\',switches.project_name,'\KAL\kalman_mat_',num2str(epoch),'.mat'],'thin')
+                        save([path_save,switches.project_name,'/KAL/kalman_mat_',num2str(epoch),'.mat'],'thin')
                     catch
                         warning('intomolab: Unable to save kalman filtering errors. Missing path')
                     end
@@ -466,7 +466,7 @@ if switches.run_SWD
                      thin.Q = diag(Q);
                     %% Save Kalman parameters to output file
                     try
-                        save([path_save,'\',switches.project_name,'\KAL\kalman_mat_',num2str(epoch),'.mat'],'thin')
+                        save([path_save,switches.project_name,'/KAL/kalman_mat_',num2str(epoch),'.mat'],'thin')
                     catch
                         warning('intomolab: Unable to save kalman filtering errors. Missing path')
                     end

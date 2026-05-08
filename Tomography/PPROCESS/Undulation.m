@@ -12,5 +12,5 @@ function  unduera = Undulation(lat1,lat2,lon1,lon2,n,path,name)
             unduera(j+1,i+1) = geoidheight2(max(lat1,lat2)-i*n,min(lon1,lon2)+j*n,'egm2008');
         end
     end
-    save(strcat(path,'\',name,'.mat'),'unduera')
+    save(strcat(path,'/',name,'.mat'),'unduera')
 end

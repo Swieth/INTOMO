@@ -288,7 +288,7 @@ if strcmp(switches.parametrization,'bilinear-h')
 end
 toc
 load(confFILE,'PATH_SAVE');
-save([pathTOMO,'\model.mat'],'model','station','values','pathTOMO','PATH_SAVE','obs_set','switches','apriori','PROJECT_NAME','-v7.3')
+save([pathTOMO,'model.mat'],'model','station','values','pathTOMO','PATH_SAVE','obs_set','switches','apriori','PROJECT_NAME','-v7.3')
 
 %% Tomography processing start
 switches.project_name = PROJECT_NAME;
@@ -296,7 +296,7 @@ output = intomolab(station,model,values,pathTOMO,PATH_SAVE,obs_set.observation_s
 disp('Tomography processing completed')
 
 %% Save the results
-save([PATH_SAVE,'\',PROJECT_NAME,'\OUT\OUTPUT_TOMO.mat'],'output')
+save([PATH_SAVE,PROJECT_NAME,'/OUT/OUTPUT_TOMO.mat'],'output')
 
 
 
