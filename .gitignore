@@ -1,7 +1,7 @@
-Tomography/DATA/exp*/METEO/ERA5_*.nc
-Tomography/DATA/exp*/WORK/*.mat
-Tomography/DATA/exp*
-Tomography/CONF/exp*.mat
+Tomography/DATA/*/METEO/ERA5_*.nc
+Tomography/DATA/*/WORK/*.mat
+Tomography/DATA/*
+Tomography/CONF/*.mat
 
 .cursor
 
