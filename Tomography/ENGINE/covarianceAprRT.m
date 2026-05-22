@@ -116,6 +116,6 @@ else
 end
 if size(modQ,1)<size(A,2)
     %outer model currently over-constrained
-    modQ(size(modQ,1)+1:size(A,2),1) = 0.00018;
+    modQ(size(modQ,1)+1:size(A,2),1) = 0.00018*10;
 end
-Q = modQ(num_Nw);
+Q = modQ(num_Nw)*10;
