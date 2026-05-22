@@ -77,11 +77,11 @@ function [A, SWD_GNSS,SIWV,REC,elev,SAT,station_name,R_SIWV,R_SWD,SWD_nodes_inte
         ind_sum = ind_sum'; 
         % Calculate vectors of the signal in each voxels
         if strcmp(switches.parametrization,'constant')
-            try
-                Avec(ind_sum (1,:),ray_num,:) = coordVector(rayRT.voxIN.coord,rayRT.i_pos);
-            catch
-                warning('groundRT: vector matrix (A_vec) calculation failed') 
-            end
+            % Index Avec by the IN-voxel ids only (ascending, matching coordVector
+            % row order).  EM-voxel rows of Avec remain zero, which is correct
+            % because voxIN.coord carries no entry/exit chord for those voxels.
+            in_vox = unique(rayRT.i_pos);
+            Avec(in_vox, ray_num, :) = coordVector(rayRT.voxIN.coord, rayRT.i_pos);
             A(ind_sum (1,:),ray_num) = ind_sum(2,:);
         elseif strcmp(switches.parametrization,'bilinear-h')
             azi = station.h(nr).satellite(sat).azi;

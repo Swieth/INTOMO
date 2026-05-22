@@ -65,18 +65,27 @@ else
             Nws = std(dNw);
             modQ = sqrt(Nwb.^2+Nws.^2)';
         else
-            href = [150, 275, 400, 575, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500,...
-                2750, 3250, 3750, 4500, 5250, 6000, 6750, 7500, 8250, 10000, 11750];
-            hlow = find(href<3000);
-            modQref = [13.29, 12.35, 12.07, 11.63, 11.55, 11.03, 10.20, 8.98, 7.91, 6.92, 5.98, 5.17...
-                4.52, 3.43, 2.79, 2.18, 1.75, 1.47, 1.19, 0.98, 0.77, 0.44, 0.22];
-            modQ = interp1(href,modQref,h,'spline');
-            plot_check = 0;
-            if plot_check==1
-                plot(modQref,href,'-o');
-                hold on
-                plot(modQ,h,'or');
-            end
+            % Trzcina et al. 2016 empirical table, valid on [150, 11750] m.
+            % pchip (Fritsch-Carlson) is shape-preserving and never overshoots,
+            % making it correct for this monotone empirical lookup.
+            % For altitudes outside the table the same piece-wise polynomial
+            % used in the non-DETER branch (below) is applied to stay consistent.
+            href    = [150, 275, 400, 575, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, ...
+                       2750, 3250, 3750, 4500, 5250, 6000, 6750, 7500, 8250, 10000, 11750];
+            modQref = [13.29, 12.35, 12.07, 11.63, 11.55, 11.03, 10.20, 8.98, 7.91, 6.92, 5.98, 5.17, ...
+                        4.52,  3.43,  2.79,  2.18,  1.75,  1.47,  1.19, 0.98, 0.77,  0.44,  0.22];
+            p1 = [-0.0552 0.6214];
+            p2 = [-0.7693 7.7347];
+            h_col  = h(:);
+            modQ   = zeros(numel(h_col), 1);
+            in_tbl = h_col >= href(1) & h_col <= href(end);
+            modQ(in_tbl)   = interp1(href, modQref, h_col(in_tbl), 'pchip');
+            h_km           = h_col(~in_tbl) / 1000;
+            modQ_out       = zeros(size(h_km));
+            low             = h_km <= 3.875;
+            modQ_out(low)  = p1(1) .* h_km(low) + p1(2);
+            modQ_out(~low) = p2(2) .* exp(p2(1) .* h_km(~low));
+            modQ(~in_tbl)  = modQ_out;
         end
         if ~exist('switches','var') || strcmp(switches.regular,'yes')
             modQl = repmat(modQ',num_lat*num_lon,1);
@@ -86,7 +95,7 @@ else
              range_intervals = 1:num_lat*num_lon:size(A,2);
              range_intervals = [range_intervals, size(A,2)];
              for lvl = 1:length(range_intervals)-1
-                Pmean1(lvl,1) = abs(mean(values.Nw_apr_num(epoch,range_intervals(lvl):range_intervals(lvl+1)) - values.aprioriEra(epoch,range_intervals(lvl):range_intervals(lvl+1))));
+                Pmean1(lvl,1) = abs(mean(values.Nw_apr_num(epoch,range_intervals(lvl):range_intervals(lvl+1)) - values.aprioriEra(epoch,range_intervals(lvl):range_intervals(lvl+1)), 'omitnan'));
                 if lvl>5
                    % Pmean1(lvl,1) = Pmean1(lvl,1)./1000;    
                 end
@@ -119,3 +128,7 @@ if size(modQ,1)<size(A,2)
     modQ(size(modQ,1)+1:size(A,2),1) = 0.00018*10;
 end
 Q = modQ(num_Nw)*10;
+if any(~isfinite(Q))
+    error('covarianceAprRT: non-finite Q produced (epoch=%d, count=%d). Root cause must be fixed upstream.', ...
+          epoch, nnz(~isfinite(Q)));
+end

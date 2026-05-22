@@ -80,40 +80,6 @@ Several locations wrap critical operations in low-information `try/catch` blocks
 
 ## 4. New issues identified (2026-05-22)
 
-### L-07 — `covarianceAprRT.m` produces NaN in `modQ`, triggering destructive "Cutting observations"
-
-**File:** [`Tomography/ENGINE/covarianceAprRT.m`](../Tomography/ENGINE/covarianceAprRT.m)
-
-Two paths produce NaN values in the output `modQ` vector:
-
-1. `interp1(href, modQref, h, 'spline')` where `href = [150, ..., 11750]` m. The TOMO grid includes `h = 0 m` and `h = 14500 m`, both outside this table; `'spline'` extrapolation produces large or NaN values for out-of-range inputs.
-
-2. When `switches.totalN` is true, `Pmean1(lvl) = abs(mean(values.Nw_apr_num - values.aprioriEra))` propagates NaN if either array contains NaN at that level.
-
-The NaNs flow into `P_apriori(epoch).P_apriori` and then into the stacked `R_SWD_k` in `matrices_epochRT.m`. The existing handler there deletes NaN rows and truncates `R_SWD_k` to `size(A_k,1)` without tracking which rows are dropped, potentially silently removing real GNSS observations.
-
-**Diagnostics added:** `matrices_epochRT.m` now reports per-source NaN counts and rewords the warning to make the destructive truncation explicit.
-
-**Suggested fix (not yet applied):** Replace `'spline'` with `'pchip'` and clamp `h` to `[min(href), max(href)]` before the call; or impute NaN-free values using the empirical polynomial fallback already present in the function.
-
----
-
-### L-08 — `coordVector.m` dead interpolation block and unsafe NaN-fill indexing (fixed)
-
-**File:** [`Tomography/PPROCESS/coordVector.m`](../Tomography/PPROCESS/coordVector.m)
-
-Two defects were present and have been corrected:
-
-1. **Dead interpolation loop (lines 13–18):** A loop filled intermediate NaN-coordinate rows by linear interpolation between valid boundary points, but the very next line (`coordV = diff(coordV(id_coord,:))`) selected only the original valid rows, discarding all interpolated output. The loop had zero effect on results.
-
-2. **Unsafe NaN-fill (`coordV(min(id)-1,:)`):** When the sentinel NaN row was appended at the end, `min(id)` was the index of that row. If `min(id) == 1` (first row is NaN), the expression `min(id)-1 == 0` caused an indexing error, silently swallowed by the `try/catch` in `groundRT.m` and `spaceRT.m`, resulting in a silently zeroed `Avec` column.
-
-Both issues are now fixed. The dead loop is removed; the NaN-fill is guarded with an explicit error if no valid direction row precedes the first NaN.
-
-**Note:** The `i_pos` argument is accepted but not used; it is retained for backward compatibility with call sites in `groundRT.m` and `spaceRT.m`.
-
----
-
 ### R-06 — Post-run `save` crash: `free(): chunks in smallbin corrupted` (deferred)
 
 **File:** [`Tomography/RUNINTOMO.m`](../Tomography/RUNINTOMO.m), line 291

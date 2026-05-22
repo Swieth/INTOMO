@@ -196,11 +196,9 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                              clear row_ind row out
                              % Calculate vector matrices
                              if strcmp(switches.parametrization,'constant')
-                                try
-                                    Avec(ind_sumRO(1,:),ray_num,:) = coordVector(rayRT.voxIN.coord,rayRT.i_pos);
-                                catch
-                                    warning('spaceRT: A matrix vector calculation failed') 
-                                end
+                                % Index Avec by IN-voxel ids only; EM rows stay zero.
+                                in_vox = unique(rayRT.i_pos);
+                                Avec(in_vox, ray_num, :) = coordVector(rayRT.voxIN.coord, rayRT.i_pos);
                                 A_RO(ind_sumRO(1,:),ray_num) = ind_sumRO(2,:);
                              elseif strcmp(switches.parametrization,'bilinear-h')
                                 if isfield(rayRT.rayIND,'X_ray_b')
