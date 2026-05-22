@@ -27,6 +27,18 @@ A_k = sparse(A_k);
 SWD_k = [SWD(epoch).SWD; SWD_apriori(epoch).SWD_apriori; SWD_constr(epoch).SWD_constr];
 SWD_k = sparse(double(SWD_k));
 R_SWD_k = [R_SWD(epoch).R_SWD; P_apriori(epoch).P_apriori; P_constr(epoch).P_constr];
+
+% Attribute NaNs to their source before any remediation
+nanR  = nnz(isnan(R_SWD(epoch).R_SWD));
+nanPa = nnz(isnan(P_apriori(epoch).P_apriori));
+nanPc = nnz(isnan(P_constr(epoch).P_constr));
+if (nanR + nanPa + nanPc) > 0
+    warning('matrices_epochRT (epoch %d): NaN counts -> R_SWD %d/%d, P_apriori %d/%d, P_constr %d/%d', ...
+            epoch, nanR, numel(R_SWD(epoch).R_SWD), ...
+            nanPa, numel(P_apriori(epoch).P_apriori), ...
+            nanPc, numel(P_constr(epoch).P_constr));
+end
+
 if any(isnan(R_SWD_k))
    if size(R_SWD_k,1) > size(A_k,1)
        id =  isnan(R_SWD_k);
@@ -37,7 +49,8 @@ if any(isnan(R_SWD_k))
        R_SWD_k(id) = 0;
        R_SWD_k = R_SWD_k(1:size(A_k,1));
    end
-   warning('Matrices Epoch: Unequal sizes of observation error matrix R and derivatatives matrix A_k. Cutting observations')
+   warning('matrices_epochRT (epoch %d): R_SWD_k contains %d NaN(s); discarding those rows and truncating to size(A_k,1)=%d. This may silently drop real observations or apriori constraints; root cause is likely covarianceAprRT.m.', ...
+           epoch, nanR + nanPa + nanPc, size(A_k,1));
 end
 R_SWD_k = double(R_SWD_k);
 R_SWD_k = sparse(R_SWD_k);

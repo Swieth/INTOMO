@@ -11,16 +11,11 @@ function [ZWDROstack,idout] = stackedNwcalc(Nwstack,height)
         
         for j = 1:size(Nw,1)
             try
-                % extract vertical refractivity profile extracted from one
-                % row of Nw
+                % Extract layer-midpoint refractivity profile (one value per layer)
                 prof = Nw(j,:)';
-                % checks whether profile length matches the height-grid length
-                if numel(prof) > nH
-                    % Profile has too many elements -> trim extra values
-                    prof = prof(1:nH);
-                elseif numel(prof) < nH
-                    % profile has too few elements -> cannot match height grid
-                    warning('stackedNWcalc.m: to few elements -> ZWDRO = NaN')
+                % Profile must have exactly nH elements (one per layer midpoint)
+                if numel(prof) ~= nH
+                    % Degenerate ray: profile/height dimension mismatch
                     ZWDRO(j) = NaN;
                     ZWDROstack(i,j) = ZWDRO(j);
                     continue

@@ -1,23 +1,36 @@
-function coordV = coordVector(coordV,i_pos)
-% Function to find local direction vectors of simulated ray path (in each traversed voxel).
-%%%INPUT
-%      coordV.... coordinates of the vectors is XYZ directions
-%%%OUTPUT
-%      coordV.... coordinates of the vectors is XYZ directions
-%      i_pos..... id number of ray points inside tomography model domain
+function dirVec = coordVector(coordIn, ~)
+% COORDVECTOR  Compute local direction vectors of a simulated ray path
+%              (one vector per traversed voxel).
+%
+% INPUT
+%   coordIn - [nPts x 3 x 2] XYZ coordinates of voxel entry/exit points
+%             (3-D array as produced by the ray tracer; NaN rows mark gaps)
+%   ~       - (unused) i_pos voxel index array passed by callers;
+%             retained in signature for backward compatibility with
+%             groundRT.m and spaceRT.m
+%
+% OUTPUT
+%   dirVec  - [nVoxels x 3] direction vectors for each traversed voxel
 
-    id_coord = 1:size(coordV,1);
-    coordV = squeeze(coordV(:,:,1));
-    id = find(isnan(coordV(:,1)));
-    id_coord(id) = [];
-    for i = 1:size(id_coord,2)-1
-        len_coord = length(id_coord(i)+1:id_coord(i+1));
-        for k = id_coord(i)+1:id_coord(i+1)-1
-            coordV(k,:) = coordV(k-1,:) + (coordV(id_coord(i+1),:) - coordV(id_coord(i),:))./len_coord;
+    % Flatten to a 2-D [nPts x 3] array using the first slice
+    coordIn = squeeze(coordIn(:,:,1));
+
+    % Identify rows that carry valid (non-NaN) coordinates
+    id_coord = find(~isnan(coordIn(:,1)))';
+
+    % Compute difference vectors between successive valid boundary points
+    dirVec = diff(coordIn(id_coord,:));   % [(numel(id_coord)-1) x 3]
+
+    % Append a NaN row as sentinel at the end (preserves legacy behaviour)
+    dirVec(end+1, :) = NaN;
+
+    % Replicate the last valid direction into any trailing NaN rows
+    id_nan = find(isnan(dirVec(:,1)));
+    if ~isempty(id_nan)
+        firstNaN = min(id_nan);
+        if firstNaN < 2
+            error('coordVector: no valid direction row precedes the first NaN row; cannot fill direction vectors');
         end
+        dirVec(id_nan, :) = repmat(dirVec(firstNaN - 1, :), numel(id_nan), 1);
     end
-    coordV = diff(coordV(id_coord,:));
-    coordV(size(coordV,1)+1,:) = [NaN,NaN,NaN];
-    id = find(isnan(coordV(:,1)));
-    coordV(id,:) = repmat(coordV(min(id)-1,:),length(id),1); 
 end

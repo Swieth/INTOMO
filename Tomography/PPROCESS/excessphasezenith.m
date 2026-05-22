@@ -2,20 +2,26 @@ function ZWD = excessphasezenith(prof, height)
 % EXCESSPHASEZENITH  Compute Zenith Wet Delay from a wet refractivity profile
 %
 % Integrates a vertical wet refractivity profile (in N-units) over a
-% height grid to produce the Zenith Wet Delay (ZWD) in metres.
+% height grid to produce the Zenith Wet Delay (ZWD) in metres using a
+% midpoint-rule sum.
+%
+% CONVENTION: prof must contain one value per *layer*, not per boundary.
+%   length(prof) == length(height) == numel(diff(model.levels_TOMO))
 %
 % Standard formula:
 %   ZWD = 1e-6 * sum( Nw_i * dh_i )
-% where dh_i is the layer thickness in metres.
+% where Nw_i is the layer-average wet refractivity (sampled at midpoint)
+% and dh_i is the layer thickness in metres.
 %
 % INPUT
-%   prof   - [nH x 1] wet refractivity profile (N-units, dimensionless x1e6)
-%   height - [nH x 1] layer thicknesses in km (from diff(model.levels_TOMO)./1000)
+%   prof   - [nLayers x 1] wet refractivity at layer midpoints (N-units)
+%   height - [nLayers x 1] layer thicknesses in km
+%            (= diff(model.levels_TOMO)./1000, so length = num_levels-1)
 %
 % OUTPUT
 %   ZWD    - Zenith Wet Delay in metres
 %
-% See also: stackedNwcalc, weightObs
+% See also: stackedNwcalc, intersetionNw, weightObs
 
 % Convert layer thicknesses from km to metres
 dh_m = height(:) * 1e3;   % [nH x 1], metres
