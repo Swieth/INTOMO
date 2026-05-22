@@ -10,6 +10,15 @@ function dirVec = coordVector(coordIn, i_pos)
 %   This correctly uses both boundary-coordinate sheets of coordIn (as
 %   produced by vox_distance.m) and handles multiple ray points per voxel.
 %
+%   Edge cases handled gracefully (zero chord, warning):
+%     - Ray enters the tomography domain already inside a voxel: sheet 1
+%       at row 1 is NaN because no voxel-face crossing was recorded by
+%       vox_distance.  The forward scan finds the first available entry; if
+%       none exists (entire traversal started at domain boundary) a zero
+%       chord is assigned.
+%     - Ray exits the tomography domain while still inside a voxel: sheet 2
+%       at the last row is NaN for the same reason; the backward scan is used.
+%
 % INPUT
 %   coordIn - [nPts x 3 x 2] XYZ voxel-boundary intersection coordinates.
 %             Sheet 1 (:,:,1): entry-side boundary points.
@@ -39,9 +48,30 @@ function dirVec = coordVector(coordIn, i_pos)
         idx = find(ic == k);               % indices of ray points in voxel k
         e   = entry_pts(idx(1),   :);      % entry boundary at first ray point
         x   = exit_pts (idx(end), :);      % exit  boundary at last  ray point
+        % Fallback: scan for first non-NaN entry and last non-NaN exit within
+        % this voxel's rows. This handles the domain-entry edge case where the
+        % ray enters the tomography domain already inside a voxel so vox_distance
+        % never records a sheet-1 entry for those initial rows.
+        if any(isnan(e))
+            entry_rows   = entry_pts(idx, :);
+            first_valid  = find(~any(isnan(entry_rows), 2), 1, 'first');
+            if ~isempty(first_valid)
+                e = entry_rows(first_valid, :);
+            end
+        end
+        if any(isnan(x))
+            exit_rows   = exit_pts(idx, :);
+            last_valid  = find(~any(isnan(exit_rows), 2), 1, 'last');
+            if ~isempty(last_valid)
+                x = exit_rows(last_valid, :);
+            end
+        end
+
         if any(isnan(e)) || any(isnan(x))
-            error('coordVector: missing entry/exit boundary for voxel id %d (row first=%d, last=%d).', ...
-                  unique_vox(k), idx(1), idx(end));
+            warning('coordVector: no resolvable entry/exit boundary for voxel id %d (n_pts=%d); zero chord assigned.', ...
+                    unique_vox(k), numel(idx));
+            dirVec(k, :) = 0;
+            continue
         end
         dirVec(k, :) = x - e;
     end
