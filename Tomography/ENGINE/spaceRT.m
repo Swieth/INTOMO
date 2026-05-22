@@ -122,7 +122,7 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                         X_T = cspice_georec(llaT(2)*pi()/180, llaT(1)*pi()/180, llaT(3)/1000, radii(1),(radii(1)-radii(2))/radii(1));
                         X_R = cspice_georec(llaR(2)*pi()/180, llaR(1)*pi()/180, llaR(3)/1000, radii(1),(radii(1)-radii(2))/radii(1));
                         %% Calculate excess phase
-                        rayRT = voxel_dist_3D_combined(model.refrRT{epoch},0,model.levels_TOMO_RT'*1000,X_T',X_R',model.ds,0.5,model.rWGS,0,model.LAT,model.LON,model.temp{epoch},model.pres{epoch},model.wvpr{epoch},switches); 
+                        rayRT = voxel_dist_3D_combined(model.refrRT{epoch},0,model.levels_TOMO_RT'*1000,X_T',X_R',model.ds,5,model.rWGS,0,model.LAT,model.LON,model.temp{epoch},model.pres{epoch},model.wvpr{epoch},switches); 
                         
                         fprintf('RO ray: alt_pass=%d, diff_dist=%.4f km, n_iter=%d\n', ...
                             isfield(rayRT,'alt_pass'), ...
