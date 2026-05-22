@@ -65,9 +65,9 @@ if ~exist(save_filename,'file')
     %% Calculate excess phase and fill A_RO matrix
     if strcmp(switches.integrated,'yes') %%yes
         if strcmp(switches.parametrization,'constant')
-           [A_RO, exPh,~,R_SWD,dexPh,coord,AvecRO] = spaceRT(model,A_RO,AvecRO,station,epoch,0,0,0,0,0,switches); 
+           [A_RO, exPh,~,R_SWD,dexPh,coord,AvecRO] = spaceRT(model,A_RO,AvecRO,station,epoch,0,0,0,0,0,switches,path_save); 
         else 
-           [A_RO, exPh,~,R_SWD,dexPh,coord,AvecRO] = spaceRT(model,A_RO,AvecRO,station,epoch,nodes_columns,planes,planes_nr,Tmatrix,Nw_apr,switches); 
+           [A_RO, exPh,~,R_SWD,dexPh,coord,AvecRO] = spaceRT(model,A_RO,AvecRO,station,epoch,nodes_columns,planes,planes_nr,Tmatrix,Nw_apr,switches,path_save); 
         end
     else
         A_RO = [];

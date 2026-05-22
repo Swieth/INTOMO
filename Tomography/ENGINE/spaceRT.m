@@ -1,4 +1,4 @@
-function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,station,epoch,nodes_columns,levels,num_lev,Tmatrix,Nw_apr,switches)   
+function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,station,epoch,nodes_columns,levels,num_lev,Tmatrix,Nw_apr,switches,path_save)   
 %Function used to build basic matrices from RO data based on 3D ray
 %tracing
 %---------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                         fprintf('RO ray: alt_pass=%d, diff_dist=%.4f km, n_iter=%d\n', ...
                             isfield(rayRT,'alt_pass'), ...
                             rayRT.diff_dist(end), ...
-                            length(rayRT.diff_dist));
+                            length(rayRT.diff_dist));   
                         
                         
                         rayRT2(i).rayRT = rayRT;
@@ -245,6 +245,14 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                             end 
                         end
                         if isfield(rayRT,'alt_pass') 
+                            fid = fopen([path_save 'alt_pass_log.txt'],'a');
+                            fprintf(fid, 'epoch=%d | sample_index=%d | alt_range=[%.2f %.2f] m | n_iter=%d\n', ...
+                                epoch, ...
+                                posit(i), ...
+                                min(rayRT.de_alt_ray_fin)*1000, ...
+                                max(rayRT.de_alt_ray_fin)*1000, ...
+                                length(rayRT.diff_dist));
+                            fclose(fid);
                             break
                         end  
 
@@ -259,3 +267,4 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
            dexPh = [];
            coord = [];
         end
+end
