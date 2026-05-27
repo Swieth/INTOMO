@@ -82,7 +82,8 @@ function [A, SWD_GNSS,SIWV,REC,elev,SAT,station_name,R_SIWV,R_SWD,SWD_nodes_inte
             % because voxIN.coord carries no entry/exit chord for those voxels.
             in_vox = unique(rayRT.i_pos);
             Avec(in_vox, ray_num, :) = coordVector(rayRT.voxIN.coord, rayRT.i_pos);
-            A(ind_sum (1,:),ray_num) = ind_sum(2,:);
+            valid_mask = ind_sum(1,:) >= 1 & ind_sum(1,:) <= size(A,1);
+            A(ind_sum(1,valid_mask),ray_num) = ind_sum(2,valid_mask);
         elseif strcmp(switches.parametrization,'bilinear-h')
             azi = station.h(nr).satellite(sat).azi;
             if isfield(rayRT.rayIND,'X_ray_b')

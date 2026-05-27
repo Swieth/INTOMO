@@ -199,7 +199,8 @@ function [A_RO, exPh,RelDist,R_SWD,dexPh,coord,Avec] = spaceRT(model,A_RO,Avec,s
                                 % Index Avec by IN-voxel ids only; EM rows stay zero.
                                 in_vox = unique(rayRT.i_pos);
                                 Avec(in_vox, ray_num, :) = coordVector(rayRT.voxIN.coord, rayRT.i_pos);
-                                A_RO(ind_sumRO(1,:),ray_num) = ind_sumRO(2,:);
+                                valid_mask = ind_sumRO(1,:) >= 1 & ind_sumRO(1,:) <= size(A_RO,1);
+                                A_RO(ind_sumRO(1,valid_mask),ray_num) = ind_sumRO(2,valid_mask);
                              elseif strcmp(switches.parametrization,'bilinear-h')
                                 if isfield(rayRT.rayIND,'X_ray_b')
                                     coordIN = rayRT.rayIND.X_ray_b';
